@@ -58,27 +58,6 @@
             "icon_svg": "<circle cx='12' cy='12' r='8.4'/><path d='M6.4 17.6 17.6 6.4'/>",
             "text": "Zero harsh\nchemicals"
           }
-        },
-        "mbadge_1": {
-          "type": "mobile_badge",
-          "settings": {
-            "icon_svg": "<path d='M12 21c0-6.5 3.5-11 8-12.5C20 15 16.5 20 12 21Z'/><path d='M12 21C12 14.5 8.5 10 4 8.5 4 15 7.5 20 12 21Z'/>",
-            "text": "Plant powered"
-          }
-        },
-        "mbadge_2": {
-          "type": "mobile_badge",
-          "settings": {
-            "icon_svg": "<path d='M12 3 4.5 6v6.2c0 4.3 3.1 7.6 7.5 8.8 4.4-1.2 7.5-4.5 7.5-8.8V6L12 3Z'/><path d='m9 12 2.2 2.2L15.4 10'/>",
-            "text": "Kids & pet safe"
-          }
-        },
-        "mbadge_3": {
-          "type": "mobile_badge",
-          "settings": {
-            "icon_svg": "<circle cx='12' cy='12' r='8.4'/><path d='M6.4 17.6 17.6 6.4'/>",
-            "text": "Zero harsh chem"
-          }
         }
       },
       "block_order": [
@@ -87,12 +66,10 @@
         "slide_3",
         "badge_1",
         "badge_2",
-        "badge_3",
-        "mbadge_1",
-        "mbadge_2",
-        "mbadge_3"
+        "badge_3"
       ]
     },
+
     "reviews": {
       "type": "purelane-reviews",
       "settings": {
@@ -161,6 +138,7 @@
         "review_5"
       ]
     },
+
     "combos": {
       "type": "purelane-combos",
       "settings": {
@@ -216,6 +194,7 @@
       },
       "block_order": ["combo_1", "combo_2", "combo_3"]
     },
+
     "bundles": {
       "type": "purelane-bundles",
       "settings": {
@@ -266,6 +245,7 @@
       },
       "block_order": ["tier_1", "tier_2", "tier_3"]
     },
+
     "grid": {
       "type": "purelane-product-grid",
       "settings": {
@@ -276,5 +256,6 @@
       }
     }
   },
+
   "order": ["hero", "reviews", "combos", "bundles", "grid"]
 }
