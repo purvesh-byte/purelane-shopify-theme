@@ -18,6 +18,10 @@
   id="shopify-section-{{ section.id }}"
   class="pl-section pl-combos-sec"
   data-section-id="{{ section.id }}">
+  <span
+    id="combos"
+    class="pl-anchor-target"
+    aria-hidden="true"></span>
   <div class="pl-wrap">
     <div class="pl-panel-head pl-rv">
       <span class="pl-kicker">{{ kicker | escape }}</span>
@@ -105,16 +109,30 @@
                 <em>{{ block.settings.discount_text | escape }}</em>
               </div>
               <div class="pl-combo-fine">{{ block.settings.fine_print | escape }}</div>
-              <a class="pl-btn {% if is_hero %}pl-btn-primary{% else %}pl-btn-ghost{% endif %}" href="{{ block.settings.cta_link | default: '#bundles' }}">
-                {{ block.settings.cta_text | default: 'Shop bundle' }}
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2.2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"><path d="M5 12h13m-5-6 6 6-6 6" /></svg>
-              </a>
+              <div data-cart-action-scope>
+                {%- if products.size > 0 -%}
+                  <button
+                    type="button"
+                    class="pl-btn {% if is_hero %}pl-btn-primary{% else %}pl-btn-ghost{% endif %}"
+                    data-add-products-to-cart
+                    data-variant-ids="{%- for product in products -%}{{ product.selected_or_first_available_variant.id }}{% unless forloop.last %},{% endunless %}{%- endfor -%}"
+                    aria-label="Add products from {{ block.settings.title | escape }} to cart">
+                    {{ block.settings.cta_text | default: 'Shop bundle' | escape }}
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2.2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      aria-hidden="true"><path d="M5 12h13m-5-6 6 6-6 6" /></svg>
+                  </button>
+                {%- else -%}
+                  <a class="pl-btn {% if is_hero %}pl-btn-primary{% else %}pl-btn-ghost{% endif %}" href="{{ block.settings.cta_link | default: '#bundles' }}">
+                    {{ block.settings.cta_text | default: 'Shop bundle' | escape }}
+                  </a>
+                {%- endif -%}
+              </div>
             </div>
           </article>
         {%- endfor -%}
@@ -130,7 +148,7 @@
           stroke-linejoin="round"><path d="M5 12h13m-5-6 6 6-6 6" /></svg>
         Swipe for more combos
       </div>
-      <p class="pl-railnote">Tapping "Shop bundle" opens the bundle picker with these products already added. You can still swap anything before you pay.</p>
+      <p class="pl-railnote">Select a combo to add its chosen products to your cart.</p>
     {%- else -%}
       <div class="pl-combos-empty pl-rv">
         <p class="pl-body-s">Add combo blocks to display bundles.</p>
@@ -414,23 +432,6 @@
     }
   }
 </style>
-
-<script>
-  (function() {
-  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var items = document.querySelectorAll('#shopify-section-{{ section.id }} .pl-rv');
-  if ('IntersectionObserver' in window && !reduce) {
-    var io = new IntersectionObserver(function(es) {
-      es.forEach(function(e) {
-        if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
-      });
-    }, { rootMargin: '0px 0px -12% 0px', threshold: 0.12 });
-    items.forEach(function(el) { io.observe(el); });
-  } else {
-    items.forEach(function(el) { el.classList.add('in'); });
-  }
-  })();
-</script>
 
 {% schema %}
   {

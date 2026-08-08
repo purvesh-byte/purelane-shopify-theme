@@ -131,7 +131,12 @@
             "discount_text": "Save ₹398",
             "fine_print": "Inclusive of all taxes · COD available",
             "cta_text": "Shop bundle",
-            "highlight": false
+            "highlight": false,
+            "product_list": [
+              "foaming-kitchen-cleaner",
+              "dishwash-gel",
+              "tap-cleaner-limescale"
+            ]
           }
         },
         "combo_2": {
@@ -145,7 +150,8 @@
             "discount_text": "Save ₹448",
             "fine_print": "Inclusive of all taxes · COD available",
             "cta_text": "Shop bundle",
-            "highlight": false
+            "highlight": false,
+            "product_list": ["laundry-detergent", "washing-machine-descaler"]
           }
         },
         "combo_3": {
@@ -160,7 +166,12 @@
             "discount_text": "Save ₹696",
             "fine_print": "Inclusive of all taxes · COD available",
             "cta_text": "Shop bundle",
-            "highlight": true
+            "highlight": true,
+            "product_list": [
+              "foaming-kitchen-cleaner",
+              "laundry-detergent",
+              "floor-cleaner-herbal"
+            ]
           }
         }
       },
@@ -185,7 +196,8 @@
             "per_product_text": "Flat ₹174 per product",
             "features": "Pick any two products\nFree shipping across India",
             "cta_text": "Build this box",
-            "highlight": false
+            "highlight": false,
+            "product_list": ["foaming-kitchen-cleaner", "laundry-detergent"]
           }
         },
         "tier_2": {
@@ -198,7 +210,12 @@
             "per_product_text": "Flat ₹166 per product",
             "features": "Pick any three products\nCovers kitchen and laundry\nFree shipping across India",
             "cta_text": "Build this box",
-            "highlight": true
+            "highlight": true,
+            "product_list": [
+              "foaming-kitchen-cleaner",
+              "laundry-detergent",
+              "floor-cleaner-herbal"
+            ]
           }
         },
         "tier_3": {
@@ -211,7 +228,14 @@
             "per_product_text": "Flat ₹160 per product",
             "features": "Pick any five products\nEvery room in one order\nFree shipping across India",
             "cta_text": "Build this box",
-            "highlight": false
+            "highlight": false,
+            "product_list": [
+              "foaming-kitchen-cleaner",
+              "laundry-detergent",
+              "floor-cleaner-herbal",
+              "dishwash-gel",
+              "handwash-gentle"
+            ]
           }
         }
       },

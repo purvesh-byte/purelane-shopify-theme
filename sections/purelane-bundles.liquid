@@ -18,6 +18,10 @@
   id="shopify-section-{{ section.id }}"
   class="pl-section pl-bundles-sec"
   data-section-id="{{ section.id }}">
+  <span
+    id="bundles"
+    class="pl-anchor-target"
+    aria-hidden="true"></span>
   <div class="pl-wrap">
     <div class="pl-glass pl-bundles-head pl-rv">
       <div class="pl-panel-head" style="margin-bottom:0">
@@ -104,18 +108,32 @@
               </ul>
             {%- endif -%}
 
-            <a class="pl-btn {% if is_best %}pl-btn-primary{% else %}pl-btn-ghost{% endif %}" href="{{ block.settings.cta_link | default: '#shop' }}">
-              {{ block.settings.cta_text | default: 'Build this box' }}
-              {%- if is_best -%}
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2.2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"><path d="M5 12h13m-5-6 6 6-6 6" /></svg>
+            <div data-cart-action-scope>
+              {%- if products.size > 0 -%}
+                <button
+                  type="button"
+                  class="pl-btn {% if is_best %}pl-btn-primary{% else %}pl-btn-ghost{% endif %}"
+                  data-add-products-to-cart
+                  data-variant-ids="{%- for product in products -%}{{ product.selected_or_first_available_variant.id }}{% unless forloop.last %},{% endunless %}{%- endfor -%}"
+                  aria-label="Add products from {{ block.settings.tag | default: 'this bundle' | escape }} to cart">
+                  {{ block.settings.cta_text | default: 'Build this box' | escape }}
+                  {%- if is_best -%}
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2.2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      aria-hidden="true"><path d="M5 12h13m-5-6 6 6-6 6" /></svg>
+                  {%- endif -%}
+                </button>
+              {%- else -%}
+                <a class="pl-btn {% if is_best %}pl-btn-primary{% else %}pl-btn-ghost{% endif %}" href="{{ block.settings.cta_link | default: '#shop' }}">
+                  {{ block.settings.cta_text | default: 'Build this box' | escape }}
+                </a>
               {%- endif -%}
-            </a>
+            </div>
           </article>
         {%- endfor -%}
       </div>
@@ -315,23 +333,6 @@
   }
 </style>
 
-<script>
-  (function() {
-  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var items = document.querySelectorAll('#shopify-section-{{ section.id }} .pl-rv');
-  if ('IntersectionObserver' in window && !reduce) {
-    var io = new IntersectionObserver(function(es) {
-      es.forEach(function(e) {
-        if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
-      });
-    }, { rootMargin: '0px 0px -12% 0px', threshold: 0.12 });
-    items.forEach(function(el) { io.observe(el); });
-  } else {
-    items.forEach(function(el) { el.classList.add('in'); });
-  }
-  })();
-</script>
-
 {% schema %}
   {
     "name": "Purelane Bundles",
@@ -374,7 +375,7 @@
             "id": "product_list",
             "label": "Products to display",
             "limit": 5,
-            "info": "Visual reference only. Select up to 5 products."
+            "info": "Products included in the bundle. Select up to 5."
           },
           {
             "type": "number",
