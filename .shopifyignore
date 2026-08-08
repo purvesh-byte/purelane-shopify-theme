@@ -1,0 +1,12 @@
+# Shopify CLI ignore
+node_modules/
+package.json
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+README.md
+products.csv
+preview/
+.vscode/
+.git/
+.gitignore

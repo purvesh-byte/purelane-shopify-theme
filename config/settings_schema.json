@@ -1,0 +1,39 @@
+[
+  {
+    "name": "Purelane",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Brand"
+      },
+      {
+        "type": "color",
+        "id": "colors_brand",
+        "label": "Brand color",
+        "default": "#4b3a8f"
+      },
+      {
+        "type": "color",
+        "id": "colors_accent",
+        "label": "Accent color",
+        "default": "#b8701c"
+      },
+      {
+        "type": "header",
+        "content": "Typography"
+      },
+      {
+        "type": "font_picker",
+        "id": "type_header_font",
+        "label": "Heading font",
+        "default": "outfit_n4"
+      },
+      {
+        "type": "font_picker",
+        "id": "type_body_font",
+        "label": "Body font",
+        "default": "inter_n4"
+      }
+    ]
+  }
+]

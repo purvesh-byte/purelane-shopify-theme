@@ -1,0 +1,23 @@
+{% comment %}
+  Purelane Rating Stars
+  Usage: {% render 'purelane-rating-stars', rating: rating %}
+{% endcomment %}
+
+{%- liquid
+  assign r = rating | default: 0
+  assign full_stars = r | floor
+  assign has_half = false
+  assign remainder = r | minus: full_stars
+  if remainder >= 0.5
+    assign has_half = true
+  endif
+-%}
+
+<span class="pl-stars" aria-label="Rating: {{ r }} out of 5">
+  <b>★ {{ r }}</b>
+</span>
+
+<style>
+.pl-stars { display: inline-flex; align-items: center; gap: 3px; }
+.pl-stars b { color: var(--pl-accent); font-weight: 700; font-size: 11.5px; }
+</style>

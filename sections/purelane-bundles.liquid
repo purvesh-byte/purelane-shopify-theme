@@ -1,0 +1,446 @@
+{% comment %}
+  Purelane Bundles
+  Matches prototype #bundles 3-tier pricing.
+  Changes from prototype:
+  - Tiers are editable blocks
+  - Product images pulled from Shopify for visual context
+  - Prices and features fully merchant-editable
+  - Accessible focus states and keyboard navigation
+{% endcomment %}
+
+{%- liquid
+  assign heading = section.settings.heading | default: 'One box. Every room.'
+  assign kicker = section.settings.kicker | default: 'Build your bundle'
+  assign subheading = section.settings.subheading | default: 'Mix and match across kitchen, laundry, home and skin. One flat price, no code needed, free shipping either way.'
+-%}
+
+<section
+  id="shopify-section-{{ section.id }}"
+  class="pl-section pl-bundles-sec"
+  data-section-id="{{ section.id }}">
+  <div class="pl-wrap">
+    <div class="pl-glass pl-bundles-head pl-rv">
+      <div class="pl-panel-head" style="margin-bottom:0">
+        <span class="pl-kicker">{{ kicker | escape }}</span>
+        <h2 class="pl-d2" style="margin-top:12px">{{ heading | escape }}</h2>
+        <p class="pl-lede" style="margin:0 auto">{{ subheading | escape }}</p>
+      </div>
+    </div>
+
+    {%- if section.blocks.size > 0 -%}
+      <div class="pl-tiers">
+        {%- for block in section.blocks -%}
+          {%- liquid
+            assign is_best = block.settings.highlight
+            assign tier_class = 'pl-glass pl-tier'
+            if is_best
+              assign tier_class = tier_class | append: ' pl-tier-best'
+            endif
+            assign products = block.settings.product_list
+            assign product_count = products.size | default: block.settings.product_count | default: 3
+          -%}
+          <article
+            class="{{ tier_class }} pl-rv"
+            style="transition-delay: {{ forloop.index0 | times: 0.18 }}s;"
+            {{ block.shopify_attributes }}>
+            {%- if block.settings.tag != blank -%}
+              <span class="pl-tier-tag">{{ block.settings.tag | escape }}</span>
+            {%- endif -%}
+
+            {%- if products.size > 0 -%}
+              <div class="pl-tierpix {% if products.size > 3 %}pl-tierpix-five{% endif %}" aria-hidden="true">
+                {%- for prod in products limit: 5 -%}
+                  {%- if prod.featured_image -%}
+                    <img
+                      src="{{ prod.featured_image | image_url: width: 120 }}"
+                      alt=""
+                      loading="lazy"
+                      width="60"
+                      height="80"
+                      class="pl-tierpix-img">
+                  {%- else -%}
+                    <span class="pl-tierpix-tile">
+                      <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.6"
+                        aria-hidden="true"><path d="M12 21c0-6.5 3.5-11 8-12.5C20 15 16.5 20 12 21Z" /><path d="M12 21C12 14.5 8.5 10 4 8.5 4 15 7.5 20 12 21Z" /></svg>
+                    </span>
+                  {%- endif -%}
+                {%- endfor -%}
+              </div>
+            {%- endif -%}
+
+            <div class="pl-tier-qty">
+              {{ product_count }}<small>Products</small>
+            </div>
+            <div class="pl-tier-price">
+              {{ block.settings.price | escape }}
+              {%- if block.settings.compare_price != blank -%}
+                <s>{{ block.settings.compare_price | escape }}</s>
+              {%- endif -%}
+            </div>
+            <p class="pl-body-s" style="font-size:12px">{{ block.settings.per_product_text | escape }}</p>
+
+            {%- if block.settings.features != blank -%}
+              <ul class="pl-tier-list">
+                {%- assign features = block.settings.features | newline_to_br | split: '<br />' -%}
+                {%- for feature in features -%}
+                  {%- assign feat = feature | strip -%}
+                  {%- if feat != '' -%}
+                    <li>
+                      <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2.4"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"><path d="m5 13 4 4L19 7" /></svg>
+                      {{ feat | escape }}
+                    </li>
+                  {%- endif -%}
+                {%- endfor -%}
+              </ul>
+            {%- endif -%}
+
+            <a class="pl-btn {% if is_best %}pl-btn-primary{% else %}pl-btn-ghost{% endif %}" href="{{ block.settings.cta_link | default: '#shop' }}">
+              {{ block.settings.cta_text | default: 'Build this box' }}
+              {%- if is_best -%}
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"><path d="M5 12h13m-5-6 6 6-6 6" /></svg>
+              {%- endif -%}
+            </a>
+          </article>
+        {%- endfor -%}
+      </div>
+    {%- else -%}
+      <div class="pl-bundles-empty pl-rv">
+        <p class="pl-body-s">Add tier blocks to display bundle pricing.</p>
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+
+<style>
+  #shopify-section-{{ section.id }} .pl-bundles-sec {
+    padding: 34px 0;
+  }
+  #shopify-section-{{ section.id }}
+  .pl-bundles-head {
+    padding: clamp(26px, 3.4vw, 40px);
+    margin-bottom: 16px;
+  }
+  #shopify-section-{{ section.id }}
+  .pl-tiers {
+    display: grid;
+    gap: 14px;
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 760px) {
+    #shopify-section-{{ section.id }} .pl-tiers {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  #shopify-section-{{ section.id }}
+  .pl-tier {
+    padding: 24px 22px;
+    transition: 0.4s var(--pl-ease);
+    display: flex;
+    flex-direction: column;
+  }
+  #shopify-section-{{ section.id }}.pl-tier:hover {
+    transform: translateY(-5px);
+  }
+  #shopify-section-{{ section.id }}
+  .pl-tier-best {
+    border-color: rgba(201, 118, 29, 0.44);
+    box-shadow: 0 26px 74px rgba(18, 12, 34, 0.44)
+    , 0 0 0 1px rgba(240, 160, 60, 0.2), var(--pl-g-inset);
+  }
+
+  #shopify-section-{{ section.id }}
+  .pl-tier-tag {
+    display: inline-block;
+    font-size: 9.5px;
+    font-weight: 800;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    padding: 5px 11px;
+    border-radius: 999px;
+    margin-bottom: 14px;
+    background: rgba(201, 118, 29, 0.18);
+    border: 1px solid rgba(201, 118, 29, 0.34);
+    color: #4f7d10;
+  }
+  #shopify-section-{{ section.id }}
+  .pl-tierpix {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 2px;
+    height: 78px;
+    margin: -4px 0 16px;
+    padding: 8px 6px;
+    border-radius: 14px;
+    background: linear-gradient(162deg, rgba(255,255,255,0.54), rgba(236,230,247,0.34));
+    border: 1px solid rgba(75, 58, 143, 0.11);
+  }
+  #shopify-section-{{ section.id }}
+  .pl-tierpix-five .pl-tierpix-img
+  , #shopify-section-{{ section.id }}
+  .pl-tierpix-five .pl-tierpix-tile {
+    height: 46px;
+  }
+  #shopify-section-{{ section.id }}
+  .pl-tierpix-img {
+    height: 54px;
+    object-fit: contain;
+    filter: drop-shadow(0 5px 8px rgba(0,74,66,0.13));
+  }
+  #shopify-section-{{ section.id }}
+  .pl-tierpix-tile {
+    height: 54px;
+    width: 36px;
+    display: grid;
+    place-items: center;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.5);
+    border: 1px dashed rgba(75, 58, 143, 0.24);
+    color: #4f7d10;
+  }
+  #shopify-section-{{ section.id }}
+  .pl-tierpix-tile svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  #shopify-section-{{ section.id }}
+  .pl-tier-qty {
+    font-family: 'Outfit'
+    , sans-serif;
+    font-weight: 800;
+    font-size: 52px;
+    line-height: 0.9;
+    color: var(--pl-surface);
+    letter-spacing: -0.03em;
+  }
+  #shopify-section-{{ section.id }}
+  .pl-tier-qty small {
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--pl-paper-3);
+    display: block;
+    margin-top: 6px;
+  }
+  #shopify-section-{{ section.id }}
+  .pl-tier-price {
+    font-family: 'Outfit'
+    , sans-serif;
+    font-weight: 700;
+    font-size: 27px;
+    color: var(--pl-accent);
+    margin: 16px 0 4px;
+  }
+  #shopify-section-{{ section.id }}
+  .pl-tier-price s {
+    font-size: 14px;
+    color: var(--pl-paper-3);
+    font-weight: 500;
+    margin-left: 8px;
+  }
+  #shopify-section-{{ section.id }}
+  .pl-tier-list {
+    list-style: none;
+    margin: 16px 0 20px;
+    display: grid;
+    gap: 8px;
+  }
+  #shopify-section-{{ section.id }}
+  .pl-tier-list li {
+    display: flex;
+    gap: 9px;
+    font-size: 13px;
+    color: var(--pl-paper-2);
+  }
+  #shopify-section-{{ section.id }}
+  .pl-tier-list li svg {
+    width: 14px;
+    height: 14px;
+    color: #4f7d10;
+    flex: 0 0 auto;
+    margin-top: 4px;
+  }
+  #shopify-section-{{ section.id }}
+  .pl-tier .pl-btn {
+    width: 100%;
+    justify-content: center;
+    margin-top: auto;
+  }
+
+  #shopify-section-{{ section.id }}
+  .pl-bundles-empty {
+    text-align: center;
+    padding: 60px 20px;
+    background: linear-gradient(158deg, rgba(255,255,255,0.66), rgba(236,230,247,0.44));
+    border-radius: var(--pl-radius);
+    border: 1px solid rgba(75, 58, 143, 0.13);
+  }
+
+  @media (max-width: 760px) {
+    #shopify-section-{{ section.id }} .pl-tierpix {
+      height: 70px;
+    }
+    #shopify-section-{{ section.id }}
+    .pl-tierpix-img {
+      height: 46px;
+    }
+    #shopify-section-{{ section.id }}
+    .pl-tierpix-tile {
+      height: 46px;
+      width: 32px;
+    }
+    #shopify-section-{{ section.id }}
+    .pl-tier-qty {
+      font-size: 44px;
+    }
+  }
+</style>
+
+<script>
+  (function() {
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var items = document.querySelectorAll('#shopify-section-{{ section.id }} .pl-rv');
+  if ('IntersectionObserver' in window && !reduce) {
+    var io = new IntersectionObserver(function(es) {
+      es.forEach(function(e) {
+        if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+      });
+    }, { rootMargin: '0px 0px -12% 0px', threshold: 0.12 });
+    items.forEach(function(el) { io.observe(el); });
+  } else {
+    items.forEach(function(el) { el.classList.add('in'); });
+  }
+  })();
+</script>
+
+{% schema %}
+  {
+    "name": "Purelane Bundles",
+    "tag": "section",
+    "class": "pl-section",
+    "settings": [
+      {
+        "type": "text",
+        "id": "kicker",
+        "label": "Kicker",
+        "default": "Build your bundle"
+      },
+      {
+        "type": "text",
+        "id": "heading",
+        "label": "Heading",
+        "default": "One box. Every room."
+      },
+      {
+        "type": "textarea",
+        "id": "subheading",
+        "label": "Subheading",
+        "default": "Mix and match across kitchen, laundry, home and skin. One flat price, no code needed, free shipping either way."
+      }
+    ],
+    "blocks": [
+      {
+        "type": "tier",
+        "name": "Bundle tier",
+        "limit": 3,
+        "settings": [
+          {
+            "type": "text",
+            "id": "tag",
+            "label": "Tag",
+            "default": "Starter"
+          },
+          {
+            "type": "product_list",
+            "id": "product_list",
+            "label": "Products to display",
+            "limit": 5,
+            "info": "Visual reference only. Select up to 5 products."
+          },
+          {
+            "type": "number",
+            "id": "product_count",
+            "label": "Product count label",
+            "default": 3
+          },
+          {
+            "type": "text",
+            "id": "price",
+            "label": "Price",
+            "default": "₹499"
+          },
+          {
+            "type": "text",
+            "id": "compare_price",
+            "label": "Compare-at price",
+            "default": "₹897"
+          },
+          {
+            "type": "text",
+            "id": "per_product_text",
+            "label": "Per-product text",
+            "default": "Flat ₹166 per product"
+          },
+          {
+            "type": "textarea",
+            "id": "features",
+            "label": "Features list",
+            "default": "Pick any three products\nCovers kitchen and laundry\nFree shipping across India"
+          },
+          {
+            "type": "text",
+            "id": "cta_text",
+            "label": "CTA text",
+            "default": "Build this box"
+          },
+          {
+            "type": "url",
+            "id": "cta_link",
+            "label": "CTA link"
+          },
+          {
+            "type": "checkbox",
+            "id": "highlight",
+            "label": "Highlight as most popular",
+            "default": false
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "Purelane Bundles",
+        "blocks": [
+          {
+            "type": "tier"
+          },
+          {
+            "type": "tier"
+          },
+          {
+            "type": "tier"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}

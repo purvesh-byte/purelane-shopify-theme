@@ -1,0 +1,134 @@
+{% comment %}
+  Purelane Product Card
+  Usage: {% render 'purelane-product-card', product: product, section_id: section.id, index: index %}
+  Requires: product (object), section_id (string), index (number)
+{% endcomment %}
+
+{%- liquid
+  assign img = product.featured_image
+  assign title = product.title
+  assign price = product.price | money_without_trailing_zeros
+  assign compare = product.compare_at_price | money_without_trailing_zeros
+  assign rating = product.metafields.reviews.rating.value | default: 0
+  assign review_count = product.metafields.reviews.rating_count.value | default: 0
+  assign sold_out = false
+  if product.available == false
+    assign sold_out = true
+  endif
+  assign label = ''
+  for tag in product.tags
+    if tag contains 'badge:'
+      assign label = tag | remove: 'badge:'
+      break
+    endif
+  endfor
+  if label == '' and product.tags contains 'new'
+    assign label = 'New'
+  elsif label == '' and product.tags contains 'bestseller'
+    assign label = 'Best seller'
+  elsif label == '' and product.tags contains 'top-rated'
+    assign label = 'Top rated'
+  endif
+-%}
+
+<article class="pl-glass pl-card" data-product-card data-product-id="{{ product.id }}">
+  <div class="pl-card-shot">
+    {%- if label != '' -%}
+      <span class="pl-card-pill">{{ label }}</span>
+    {%- endif -%}
+
+    {%- if img -%}
+      <img
+        src="{{ img | image_url: width: 400 }}"
+        srcset="{{ img | image_url: width: 200 }} 200w, {{ img | image_url: width: 400 }} 400w"
+        sizes="(max-width: 760px) 50vw, 25vw"
+        alt="{{ img.alt | escape | default: title | escape }}"
+        loading="lazy"
+        width="400"
+        height="400"
+        class="pl-card-img"
+      >
+    {%- else -%}
+      <div class="pl-card-placeholder" role="img" aria-label="{{ title | escape }}">
+        <svg viewBox="0 0 100 140" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <rect x="20" y="10" width="60" height="110" rx="8" fill="rgba(75,58,143,0.12)" stroke="rgba(75,58,143,0.2)" stroke-width="1"/>
+          <rect x="35" y="5" width="30" height="8" rx="2" fill="rgba(75,58,143,0.15)"/>
+          <rect x="30" y="45" width="40" height="30" rx="4" fill="rgba(75,58,143,0.08)"/>
+          <line x1="35" y1="82" x2="65" y2="82" stroke="rgba(75,58,143,0.2)" stroke-width="1"/>
+          <line x1="38" y1="88" x2="62" y2="88" stroke="rgba(75,58,143,0.12)" stroke-width="1"/>
+        </svg>
+      </div>
+    {%- endif -%}
+  </div>
+
+  <h4 class="pl-card-title">{{ title | escape }}</h4>
+
+  <div class="pl-card-rate">
+    {%- render 'purelane-rating-stars', rating: rating -%}
+    <span class="pl-card-rate-text">{%- if review_count > 0 -%}· {{ review_count }} reviews{%- endif -%}</span>
+  </div>
+
+  <div class="pl-card-pr">
+    <strong>{{ price }}</strong>
+    {%- if product.compare_at_price > product.price -%}
+      <s>{{ compare }}</s>
+      <em>{{ product.compare_at_price | minus: product.price | times: 100 | divided_by: product.compare_at_price }}% off</em>
+    {%- endif -%}
+  </div>
+
+  {%- if sold_out -%}
+    <button class="pl-btn pl-btn-ghost pl-btn-sm" disabled>Sold out</button>
+  {%- else -%}
+    <button
+      class="pl-btn pl-btn-ghost pl-btn-sm"
+      data-add-to-cart
+      data-variant-id="{{ product.selected_or_first_available_variant.id }}"
+      aria-label="Add {{ title | escape }} to cart"
+    >
+      Add to cart
+    </button>
+  {%- endif -%}
+</article>
+
+<style>
+.pl-card { padding: 16px; display: flex; flex-direction: column; transition: 0.4s var(--pl-ease); height: 100%; }
+.pl-card:hover { transform: translateY(-5px); }
+.pl-card-shot {
+  height: 150px; border-radius: 14px; margin-bottom: 14px;
+  display: grid; place-items: center; position: relative; overflow: hidden;
+  background: linear-gradient(160deg, rgba(236,230,247,0.60), rgba(236,230,247,0.42));
+  border: 1px solid rgba(75, 58, 143, 0.10);
+}
+.pl-card-img { height: 122px; width: auto; object-fit: contain; }
+.pl-card-placeholder { height: 122px; width: auto; display: grid; place-items: center; }
+.pl-card-placeholder svg { height: 100%; width: auto; }
+.pl-card-pill {
+  position: absolute; top: 9px; left: 9px;
+  font-size: 8.5px; font-weight: 800; letter-spacing: 0.13em; text-transform: uppercase;
+  padding: 4px 9px; border-radius: 999px;
+  background: rgba(255,255,255,0.86); border: 1px solid rgba(201,118,29,0.34); color: #4f7d10;
+  z-index: 2;
+}
+.pl-card-title {
+  font-family: 'Outfit', system-ui, sans-serif; font-size: 13.5px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.03em; color: var(--pl-surface);
+  line-height: 1.2; margin-bottom: 7px;
+}
+.pl-card-rate {
+  font-size: 11.5px; color: var(--pl-paper-2); margin-bottom: 10px;
+  display: flex; align-items: center; gap: 5px;
+}
+.pl-card-rate b { color: var(--pl-accent); font-weight: 700; }
+.pl-card-rate-text { font-size: 11px; }
+.pl-card-pr {
+  margin-top: auto; display: flex; align-items: baseline; gap: 8px; margin-bottom: 12px;
+}
+.pl-card-pr strong { font-family: 'Outfit', sans-serif; font-size: 18px; color: var(--pl-surface); font-weight: 700; }
+.pl-card-pr s { font-size: 12px; color: var(--pl-paper-3); }
+.pl-card-pr em { font-style: normal; font-size: 10px; font-weight: 800; letter-spacing: 0.08em; color: var(--pl-accent); }
+
+@media (max-width: 760px) {
+  .pl-card-shot { height: 126px; }
+  .pl-card-img, .pl-card-placeholder { height: 108px; }
+}
+</style>

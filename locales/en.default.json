@@ -1,0 +1,16 @@
+{
+  "general": {
+    "pagination": {
+      "previous": "Previous",
+      "next": "Next"
+    },
+    "search": {
+      "search": "Search"
+    }
+  },
+  "sections": {
+    "header": {
+      "announcement": "Free shipping on every bundle across India"
+    }
+  }
+}

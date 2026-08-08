@@ -1,0 +1,239 @@
+{% comment %}
+  Purelane Reviews Rail
+  Matches prototype #reviews auto-marquee band.
+  Changes from prototype:
+  - Reviews are editable blocks, not hardcoded
+  - Auto-scroll pauses on hover/focus for accessibility
+  - Respects prefers-reduced-motion
+  - Keyboard navigable
+  - Rating uses accessible text, not just stars
+{% endcomment %}
+
+{%- liquid
+  assign heading = section.settings.heading | default: "That's what they said"
+  assign rating_avg = section.settings.rating_avg | default: '4.8'
+  assign review_count = section.settings.review_count | default: '8,000+'
+  assign homes_count = section.settings.homes_count | default: '12 lakh+'
+-%}
+
+<section
+  id="shopify-section-{{ section.id }}"
+  class="pl-section pl-reviews-sec"
+  data-section-id="{{ section.id }}"
+>
+  <div class="pl-wrap">
+    <div class="pl-revhead pl-rv">
+      <span class="pl-kicker">{{ heading | escape }}</span>
+      <span class="pl-rev-agg">
+        <span class="pl-rev-stars" aria-label="{{ rating_avg }} out of 5 stars">★★★★★</span>
+        <b>{{ rating_avg | escape }}</b> from {{ review_count | escape }} reviews
+      </span>
+      <span class="pl-rev-agg">Loved by <b>{{ homes_count | escape }}</b> homes</span>
+    </div>
+  </div>
+
+  {%- if section.blocks.size > 0 -%}
+    <div class="pl-revrail pl-rv" role="region" aria-label="Customer reviews" tabindex="0">
+      <div class="pl-revtrack" id="revtrack-{{ section.id }}">
+        {%- comment %} Duplicate blocks for seamless loop {% endcomment -%}
+        {%- for i in (1..2) -%}
+          {%- for block in section.blocks -%}
+            <article class="pl-glass-2 pl-rcard" {{ block.shopify_attributes }}>
+              <div class="pl-rcard-st" aria-label="{{ block.settings.rating | default: 5 }} out of 5 stars">
+                {{ '★' | times: block.settings.rating | default: 5 }}
+              </div>
+              <h5>{{ block.settings.title | escape }}</h5>
+              <p>{{ block.settings.text | escape }}</p>
+              <div class="pl-rcard-who">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 13 4 4L19 7"/></svg>
+                <b>{{ block.settings.author | escape }}</b>
+                <span>· {{ block.settings.product_name | escape }}</span>
+              </div>
+            </article>
+          {%- endfor -%}
+        {%- endfor -%}
+      </div>
+    </div>
+  {%- else -%}
+    <div class="pl-wrap">
+      <div class="pl-reviews-empty pl-rv">
+        <p class="pl-body-s">Add review blocks to display customer testimonials.</p>
+      </div>
+    </div>
+  {%- endif -%}
+</section>
+
+<style>
+#shopify-section-{{ section.id }} .pl-reviews-sec { padding: 34px 0; }
+#shopify-section-{{ section.id }} .pl-revhead {
+  display: flex; align-items: center; justify-content: center;
+  gap: 10px 18px; flex-wrap: wrap; margin-bottom: 14px;
+}
+#shopify-section-{{ section.id }} .pl-rev-agg {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 11.5px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--pl-paper-2);
+}
+#shopify-section-{{ section.id }} .pl-rev-agg b {
+  font-family: 'Outfit', sans-serif; font-size: 16px; color: var(--pl-accent); letter-spacing: 0;
+}
+#shopify-section-{{ section.id }} .pl-rev-stars { color: #7a9c1e; font-size: 12px; letter-spacing: 0.16em; }
+
+#shopify-section-{{ section.id }} .pl-revrail {
+  overflow: hidden; position: relative;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
+}
+#shopify-section-{{ section.id }} .pl-revrail:focus { outline: 2px solid var(--pl-accent); outline-offset: -2px; }
+#shopify-section-{{ section.id }} .pl-revtrack {
+  display: flex; gap: 12px; width: max-content;
+  animation: pl-marq 52s linear infinite;
+}
+#shopify-section-{{ section.id }} .pl-revrail:hover .pl-revtrack,
+#shopify-section-{{ section.id }} .pl-revrail:focus-within .pl-revtrack {
+  animation-play-state: paused;
+}
+@keyframes pl-marq {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(-50%, 0, 0); }
+}
+
+#shopify-section-{{ section.id }} .pl-rcard {
+  flex: 0 0 auto; width: 284px; padding: 15px 17px; border-radius: 18px;
+}
+#shopify-section-{{ section.id }} .pl-rcard-st {
+  color: #7a9c1e; font-size: 10.5px; letter-spacing: 0.2em; margin-bottom: 9px;
+}
+#shopify-section-{{ section.id }} .pl-rcard h5 {
+  font-family: 'Outfit', sans-serif; font-size: 12px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.05em; color: var(--pl-surface); margin-bottom: 7px;
+}
+#shopify-section-{{ section.id }} .pl-rcard p {
+  font-size: 12.6px; color: var(--pl-paper-2); line-height: 1.52; margin-bottom: 11px;
+}
+#shopify-section-{{ section.id }} .pl-rcard-who {
+  display: flex; align-items: center; gap: 7px;
+  font-size: 9.5px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--pl-paper-3);
+}
+#shopify-section-{{ section.id }} .pl-rcard-who b { color: var(--pl-surface); font-weight: 700; }
+#shopify-section-{{ section.id }} .pl-rcard-who svg { width: 12px; height: 12px; color: #4f7d10; flex: 0 0 auto; }
+
+#shopify-section-{{ section.id }} .pl-reviews-empty {
+  text-align: center; padding: 60px 20px;
+  background: linear-gradient(158deg, rgba(255,255,255,0.66), rgba(236,230,247,0.44));
+  border-radius: var(--pl-radius); border: 1px solid rgba(75, 58, 143, 0.13);
+}
+
+@media (max-width: 760px) {
+  #shopify-section-{{ section.id }} .pl-rcard { width: 250px; padding: 13px 14px; }
+  #shopify-section-{{ section.id }} .pl-revtrack { animation-duration: 40s; }
+}
+@media (prefers-reduced-motion: reduce) {
+  #shopify-section-{{ section.id }} .pl-revtrack { animation: none; }
+}
+</style>
+
+<script>
+(function() {
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var items = document.querySelectorAll('#shopify-section-{{ section.id }} .pl-rv');
+  if ('IntersectionObserver' in window && !reduce) {
+    var io = new IntersectionObserver(function(es) {
+      es.forEach(function(e) {
+        if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+      });
+    }, { rootMargin: '0px 0px -12% 0px', threshold: 0.12 });
+    items.forEach(function(el) { io.observe(el); });
+  } else {
+    items.forEach(function(el) { el.classList.add('in'); });
+  }
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Purelane Reviews",
+  "tag": "section",
+  "class": "pl-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Kicker heading",
+      "default": "That's what they said"
+    },
+    {
+      "type": "text",
+      "id": "rating_avg",
+      "label": "Average rating",
+      "default": "4.8"
+    },
+    {
+      "type": "text",
+      "id": "review_count",
+      "label": "Review count text",
+      "default": "8,000+"
+    },
+    {
+      "type": "text",
+      "id": "homes_count",
+      "label": "Homes count text",
+      "default": "12 lakh+"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "review",
+      "name": "Review",
+      "settings": [
+        {
+          "type": "range",
+          "id": "rating",
+          "min": 1,
+          "max": 5,
+          "step": 1,
+          "label": "Rating",
+          "default": 5
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Review title",
+          "default": "Works like a charm"
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "Review text",
+          "default": "Finally an eco option that cleans as well as the chemical detergent I used for years, and it smells better."
+        },
+        {
+          "type": "text",
+          "id": "author",
+          "label": "Author name",
+          "default": "Anita"
+        },
+        {
+          "type": "text",
+          "id": "product_name",
+          "label": "Product name",
+          "default": "Laundry detergent"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Purelane Reviews",
+      "blocks": [
+        { "type": "review" },
+        { "type": "review" },
+        { "type": "review" },
+        { "type": "review" },
+        { "type": "review" }
+      ]
+    }
+  ]
+}
+{% endschema %}
